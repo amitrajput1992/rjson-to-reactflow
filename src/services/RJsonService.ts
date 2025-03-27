@@ -9,7 +9,7 @@ export class RJsonService {
       project: {
         id: 0,
         name: '',
-        tags: null,
+        tags: [],
         uuid: '',
         active: true,
         engine: '',

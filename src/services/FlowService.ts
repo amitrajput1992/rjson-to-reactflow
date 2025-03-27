@@ -1,5 +1,6 @@
 import { Node, Edge } from 'reactflow';
 import { RJsonProject } from '../types/rjson';
+import { RuleEvent, RuleAction } from '@gmetrixr/project-rjson/lib/esm/r/definitions/rules';
 
 interface RuleProps {
   tracked?: boolean;
@@ -9,10 +10,10 @@ interface RuleProps {
 }
 
 interface WhenEvent {
-  type: string;
+  type: RuleEvent;
   order: number;
   props: {
-    event: string;
+    event: RuleEvent;
     we_co_id: number;
     we_co_type: string;
     we_properties: any[];
@@ -20,10 +21,10 @@ interface WhenEvent {
 }
 
 interface ThenAction {
-  type: string;
+  type: RuleAction;
   order: number;
   props: {
-    action: string;
+    action: RuleAction;
     ta_co_id: number;
     ta_co_type: string;
     ta_properties: any[];
@@ -93,7 +94,7 @@ export class FlowService {
     // Constants for layout
     const COLUMN_WIDTH = 300;
     const ROW_HEIGHT = 120;
-    const ELEMENT_OFFSET_X = 300;
+    const ELEMENT_OFFSET_X = 400;
     
     // Add project node only if we're showing all scenes or if it's the first time
     if (!selectedSceneId) {
@@ -228,24 +229,10 @@ export class FlowService {
             const weElement = elementMap[weElementId];
             
             // Create when_event node
-            const whenEventNode: Node = {
-              id: `when-${ruleId}-${whenEventId}`,
-              type: 'whenEvent',
-              data: {
-                label: `When: ${whenEvent.props.event}`,
-                event: whenEvent.props.event,
-                elementName: weElement?.name || 'Unknown Element',
-                properties: whenEvent.props.we_properties.map((id: number) => {
-                  const propElement = elementMap[id.toString()];
-                  return propElement?.name || id.toString();
-                }),
-                color: '#FFF3E0' // Orange for when_event
-              },
-              position: { 
-                x: selectedSceneId ? COLUMN_WIDTH * 2 : COLUMN_WIDTH * 3, 
-                y: ruleY - 60 
-              }
-            };
+            const whenEventNode = FlowService.createWhenEventNode(`rule-${ruleId}`, whenEvent.props.event, weElementId, whenEvent.props.we_properties.map((id: number) => {
+              const propElement = elementMap[id.toString()];
+              return propElement?.name || id.toString();
+            }));
             nodes.push(whenEventNode);
             
             // Connect rule to when_event
@@ -309,24 +296,10 @@ export class FlowService {
             const taElement = elementMap[taElementId];
             
             // Create then_action node
-            const thenActionNode: Node = {
-              id: `then-${ruleId}-${thenActionId}`,
-              type: 'thenAction',
-              data: {
-                label: `Then: ${thenAction.props.action}`,
-                action: thenAction.props.action,
-                elementName: taElement?.name || 'Unknown Element',
-                properties: thenAction.props.ta_properties.map((id: number) => {
-                  const propElement = elementMap[id.toString()];
-                  return propElement?.name || id.toString();
-                }),
-                color: '#E8F5E9' // Green for then_action
-              },
-              position: { 
-                x: selectedSceneId ? COLUMN_WIDTH * 2 : COLUMN_WIDTH * 3, 
-                y: ruleY + 60 
-              }
-            };
+            const thenActionNode = FlowService.createThenActionNode(`rule-${ruleId}`, thenAction.props.action, taElementId, thenAction.props.ta_properties.map((id: number) => {
+              const propElement = elementMap[id.toString()];
+              return propElement?.name || id.toString();
+            }));
             nodes.push(thenActionNode);
             
             // Connect rule to then_action
@@ -393,6 +366,34 @@ export class FlowService {
     });
 
     return { nodes, edges };
+  }
+
+  static createWhenEventNode(id: string, event: RuleEvent, elementId: string, properties: string[]): Node {
+    return {
+      id: `when-${id}`,
+      type: 'whenEvent',
+      position: { x: 600, y: 200 },
+      data: {
+        eventType: event,
+        elementName: elementId,
+        properties,
+        label: event
+      }
+    };
+  }
+
+  static createThenActionNode(id: string, action: RuleAction, elementId: string, properties: string[]): Node {
+    return {
+      id: `then-${id}`,
+      type: 'thenAction',
+      position: { x: 900, y: 200 },
+      data: {
+        actionType: action,
+        elementName: elementId,
+        properties,
+        label: action
+      }
+    };
   }
 
   /**

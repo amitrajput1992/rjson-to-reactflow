@@ -1,5 +1,6 @@
 import React from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
+import { rn } from '@gmetrixr/project-rjson';
 
 // Project Node
 export function ProjectNode({ data }: NodeProps) {
@@ -51,17 +52,33 @@ export const RuleNode = (props: NodeProps) => {
   );
 };
 
+interface WhenEventNodeData {
+  eventType: rn.RuleEvent;
+  elementName: string;
+  properties: string[];
+  label: string;
+}
+
+interface ThenActionNodeData {
+  actionType: rn.RuleAction;
+  elementName: string;
+  properties: string[];
+  label: string;
+}
+
 // When Event Node
-export const WhenEventNode = (props: NodeProps) => {
+export const WhenEventNode = (props: NodeProps<WhenEventNodeData>) => {
   const { data } = props;
   
   if (!data) return null;
 
+  const displayName = rn.rEventDisplayName[data.eventType];
+  
   return (
     <div className="node when-event-node">
       <Handle type="target" position={Position.Left} id="when-target" />
       <div className="node-header" style={{ backgroundColor: '#FFF3E0', color: '#E65100' }}>
-        <h4>{data.label}</h4>
+        <h4>{displayName || data.eventType}</h4>
       </div>
       <div className="node-content">
         <div className="event-details">
@@ -84,16 +101,18 @@ export const WhenEventNode = (props: NodeProps) => {
 };
 
 // Then Action Node
-export const ThenActionNode = (props: NodeProps) => {
+export const ThenActionNode = (props: NodeProps<ThenActionNodeData>) => {
   const { data } = props;
   
   if (!data) return null;
 
+  const displayName = rn.rActionDisplayName[data.actionType];
+  
   return (
     <div className="node then-action-node">
       <Handle type="target" position={Position.Left} id="then-target" />
       <div className="node-header" style={{ backgroundColor: '#E8F5E9', color: '#1B5E20' }}>
-        <h4>{data.label}</h4>
+        <h4>{displayName || data.actionType}</h4>
       </div>
       <div className="node-content">
         <div className="action-details">
