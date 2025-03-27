@@ -1,38 +1,427 @@
-.App {
-  text-align: center;
+/* Light mode variables */
+:root {
+  --bg-light: #ffffff;
+  --bg-medium: #f5f5f5;
+  --bg-dark: #e0e0e0;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-color: #dddddd;
+  --accent-blue: #2196F3;
+  --accent-green: #4CAF50;
+  --accent-orange: #FF9800;
+  --accent-purple: #9C27B0;
+  --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-light);
+  color: var(--text-primary);
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+} 
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* App container */
+.app-container {
+  width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-light);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.light-mode {
+  --reactflow-background: var(--bg-medium);
+  --reactflow-node-color: var(--bg-light);
+  --reactflow-node-border: var(--border-color);
+  --reactflow-handle-color: var(--accent-blue);
+  --reactflow-handle-width: 8px;
+  --reactflow-handle-height: 8px;
+  --reactflow-label-color: var(--text-primary);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 15px 25px;
+  background-color: var(--bg-medium);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 10px var(--shadow-color);
+  z-index: 10;
+  height: 60px;
+  min-height: 60px;
+  box-sizing: border-box;
+  gap: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Scene selector */
+.scene-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scene-selector label {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.scene-selector select,
+.scene-selector-large select {
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-light);
+  color: var(--text-primary);
+  font-size: 14px;
+  min-width: 220px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+.scene-selector select:focus,
+.scene-selector-large select:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* File upload styles */
+.file-upload-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-upload-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--bg-medium);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+}
+
+.file-upload-label:hover {
+  background-color: var(--bg-light);
+  border-color: var(--accent-blue);
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.upload-icon {
+  font-size: 18px;
+}
+
+.upload-text {
+  font-size: 14px;
+}
+
+.file-error {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.file-upload-large {
+  margin-top: 20px;
+}
+
+.file-upload-large .file-upload-label {
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  height: calc(100vh - 60px);
+}
+
+/* No scene message */
+.no-scene-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+
+.message-card {
+  background-color: var(--bg-light);
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 10px 25px var(--shadow-color);
+  border: 1px solid var(--border-color);
+}
+
+.message-card h2 {
+  margin-top: 0;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.message-card p {
+  color: var(--text-secondary);
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.scene-selector-large {
+  margin-top: 20px;
+}
+
+.scene-selector-large select {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+}
+
+/* Flow container */
+.flow-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-medium);
+  position: relative;
+}
+
+/* Fix for React Flow container */
+.react-flow {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.react-flow__renderer {
+  width: 100%;
+  height: 100%;
+}
+
+.react-flow__pane {
+  z-index: 1;
+}
+
+/* React Flow Customizations */
+.react-flow__node {
+  border-radius: 8px;
+  box-shadow: 0 4px 10px var(--shadow-color);
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+  z-index: 2;
+}
+
+.react-flow__node:hover {
+  box-shadow: 0 6px 14px var(--shadow-color);
+  transform: translateY(-2px);
+  z-index: 10;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+  stroke: #aaaaaa;
+}
+
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke: var(--accent-orange);
+  stroke-width: 2;
+  stroke-dasharray: 5;
+  animation: flowAnimation 1s infinite linear;
+}
+
+@keyframes flowAnimation {
+  0% {
+    stroke-dashoffset: 20;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent-blue);
+  border: 2px solid var(--bg-light);
+  opacity: 1;
+  z-index: 3;
+}
+
+.react-flow__handle:hover {
+  background-color: var(--accent-orange);
+}
+
+/* Controls styling */
+.flow-controls {
+  bottom: 20px;
+  right: 20px;
+  box-shadow: 0 0 15px var(--shadow-color);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 5;
+  width: 220px;
+  left: unset !important
+}
+
+.react-flow__controls-button {
+  background-color: var(--bg-light) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+  width: 28px;
+  height: 28px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.react-flow__controls-button:hover {
+  background-color: var(--bg-dark) !important;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.react-flow__controls-button svg {
+  fill: var(--text-primary);
+}
+
+/* Node-specific styles */
+.node {
+  background-color: var(--bg-light);
+  color: var(--text-primary);
+  border-radius: 8px;
+  min-width: 150px;
+  max-width: 250px;
+  box-shadow: 0 4px 6px var(--shadow-color);
+  border: 1px solid var(--border-color);
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.node-header {
+  padding: 10px 12px;
+  border-radius: 8px 8px 0 0;
+  color: #333333;
+  font-weight: 500;
+}
+
+.node-header h3, .node-header h4 {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.node-content {
+  padding: 12px;
+  color: var(--text-primary);
+}
+
+.project-node {
+  min-width: 220px;
+}
+
+.scene-node {
+  min-width: 180px;
+}
+
+.rule-node {
+  min-width: 160px;
+}
+
+.when-event-node, .then-action-node {
+  min-width: 180px;
+}
+
+.element-node {
+  min-width: 140px;
+}
+
+.rule-properties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.rule-property {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: rgba(33, 150, 243, 0.1);
+  color: var(--accent-blue);
+}
+
+.rule-property.disabled {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+
+.event-details, .action-details {
+  font-size: 12px;
+}
+
+.event-details p, .action-details p {
+  margin: 4px 0;
+  color: var(--text-primary);
+}
+
+.event-details strong, .action-details strong {
+  color: var(--accent-blue);
+}
+
+.event-properties ul, .action-properties ul {
+  margin: 4px 0;
+  padding-left: 20px;
+  color: var(--text-secondary);
+}
+
+.event-properties li, .action-properties li {
+  margin-bottom: 2px;
+}
+
+/* Minimap styling */
+.react-flow__minimap {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  z-index: 5;
+}
+
+/* Attribution styling */
+.react-flow__attribution {
+  background-color: transparent;
+  color: var(--text-secondary);
+  z-index: 5;
+}
+
+/* Background styling */
+.react-flow__background {
+  background-color: var(--bg-medium);
 }
