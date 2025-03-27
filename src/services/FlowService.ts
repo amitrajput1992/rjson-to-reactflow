@@ -94,26 +94,12 @@ export class FlowService {
     // Constants for layout
     const COLUMN_WIDTH = 300;
     const ROW_HEIGHT = 120;
-    const ELEMENT_OFFSET_X = 400;
+    const COLUMN_1_X = 50;   // Scene column
+    const COLUMN_2_X = 400;  // Rule column
+    const COLUMN_3_X = 750;  // When Event column
+    const COLUMN_4_X = 1100; // Then Action column
+    const COLUMN_5_X = 1450; // Element/Scene column
     
-    // Add project node only if we're showing all scenes or if it's the first time
-    if (!selectedSceneId) {
-      // Add project node at the leftmost position
-      const projectNode: Node = {
-        id: 'project',
-        type: 'projectNode',
-        position: { x: 50, y: 50 },
-        data: {
-          name: rjson.project.name,
-          version: rjson.projectJson.props.version,
-          isExpanded: true,
-          onExpand: undefined, // Will be set by the App component
-          color: '#E3F2FD'
-        }
-      };
-      nodes.push(projectNode);
-    }
-
     // Get scenes to process
     const scenes = rjson.projectJson.records.scene || {};
     const scenesToProcess = selectedSceneId 
@@ -129,7 +115,7 @@ export class FlowService {
         id: `scene-${sceneId}`,
         type: 'sceneNode',
         position: { 
-          x: selectedSceneId ? 50 : COLUMN_WIDTH, 
+          x: COLUMN_1_X, 
           y: sceneY 
         },
         data: {
@@ -141,16 +127,6 @@ export class FlowService {
         }
       };
       nodes.push(sceneNode);
-
-      // Connect project to scene if showing all scenes
-      if (!selectedSceneId) {
-        edges.push({
-          id: `project-scene-${sceneId}`,
-          source: 'project',
-          target: `scene-${sceneId}`,
-          type: 'smoothstep'
-        });
-      }
 
       // Initialize ruleY outside the if statement to fix scope issue
       let ruleY = sceneY; // Start rules at the same Y as the scene
@@ -207,7 +183,7 @@ export class FlowService {
               }
             },
             position: { 
-              x: selectedSceneId ? COLUMN_WIDTH : COLUMN_WIDTH * 2, 
+              x: COLUMN_2_X, 
               y: ruleY 
             }
           };
@@ -228,11 +204,21 @@ export class FlowService {
             const weElementId = whenEvent.props.we_co_id.toString();
             const weElement = elementMap[weElementId];
             
-            // Create when_event node
-            const whenEventNode = FlowService.createWhenEventNode(`rule-${ruleId}`, whenEvent.props.event, weElementId, whenEvent.props.we_properties.map((id: number) => {
-              const propElement = elementMap[id.toString()];
-              return propElement?.name || id.toString();
-            }));
+            // Create when_event node in column 3
+            const whenEventNode: Node = {
+              id: `when-rule-${ruleId}`,
+              type: 'whenEvent',
+              position: { x: COLUMN_3_X, y: ruleY - 50 },
+              data: {
+                eventType: whenEvent.props.event,
+                elementName: weElement?.name || 'Unknown Element',
+                properties: whenEvent.props.we_properties.map((id: number) => {
+                  const propElement = elementMap[id.toString()];
+                  return propElement?.name || id.toString();
+                }),
+                label: whenEvent.props.event
+              }
+            };
             nodes.push(whenEventNode);
             
             // Connect rule to when_event
@@ -244,7 +230,7 @@ export class FlowService {
               animated: true
             });
             
-            // If the when_event references an element, add it
+            // If the when_event references an element, add it to column 5
             if (weElement) {
               // Create element node
               const elementNodeId = `element-${weElementId}`;
@@ -258,8 +244,8 @@ export class FlowService {
                     color: '#F3E5F5' // Purple for elements
                   },
                   position: { 
-                    x: selectedSceneId ? COLUMN_WIDTH * 2 + ELEMENT_OFFSET_X : COLUMN_WIDTH * 3 + ELEMENT_OFFSET_X, 
-                    y: ruleY - 60 
+                    x: COLUMN_5_X, 
+                    y: ruleY - 50 
                   }
                 });
               }
@@ -295,11 +281,21 @@ export class FlowService {
             const taElementId = thenAction.props.ta_co_id.toString();
             const taElement = elementMap[taElementId];
             
-            // Create then_action node
-            const thenActionNode = FlowService.createThenActionNode(`rule-${ruleId}`, thenAction.props.action, taElementId, thenAction.props.ta_properties.map((id: number) => {
-              const propElement = elementMap[id.toString()];
-              return propElement?.name || id.toString();
-            }));
+            // Create then_action node in column 4
+            const thenActionNode: Node = {
+              id: `then-rule-${ruleId}`,
+              type: 'thenAction',
+              position: { x: COLUMN_4_X, y: ruleY + 50 },
+              data: {
+                actionType: thenAction.props.action,
+                elementName: taElement?.name || 'Unknown Element',
+                properties: thenAction.props.ta_properties.map((id: number) => {
+                  const propElement = elementMap[id.toString()];
+                  return propElement?.name || id.toString();
+                }),
+                label: thenAction.props.action
+              }
+            };
             nodes.push(thenActionNode);
             
             // Connect rule to then_action
@@ -311,7 +307,7 @@ export class FlowService {
               animated: true
             });
             
-            // If the then_action references an element, add it
+            // If the then_action references an element, add it to column 5
             if (taElement) {
               // Create element node if it doesn't exist
               const elementNodeId = `element-${taElementId}`;
@@ -325,8 +321,8 @@ export class FlowService {
                     color: '#F3E5F5' // Purple for elements
                   },
                   position: { 
-                    x: selectedSceneId ? COLUMN_WIDTH * 2 + ELEMENT_OFFSET_X : COLUMN_WIDTH * 3 + ELEMENT_OFFSET_X, 
-                    y: ruleY + 60 
+                    x: COLUMN_5_X, 
+                    y: ruleY + 50 
                   }
                 });
               }

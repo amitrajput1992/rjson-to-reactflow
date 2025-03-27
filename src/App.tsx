@@ -113,6 +113,20 @@ function App() {
     <div className="app-container light-mode">
       <div className="header">
         <h1>RJSON Flow Diagram</h1>
+        {rjsonFile && selectedSceneId && (
+          <div className="scene-selector-topbar">
+            <label htmlFor="scene-select">Scene: </label>
+            <select 
+              id="scene-select"
+              value={selectedSceneId} 
+              onChange={handleSceneChange}
+            >
+              {sceneOptions.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
       
       <div className="content">
