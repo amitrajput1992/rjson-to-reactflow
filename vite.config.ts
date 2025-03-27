@@ -32,6 +32,8 @@ export default defineConfig({
     include: ['@gmetrixr/gdash', '@gmetrixr/project-rjson'],
   },
   build: {
+    outDir: 'build',
+    emptyOutDir: true, // also necessary
     commonjsOptions: {
       include: [/node_modules/],
     },
