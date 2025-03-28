@@ -1,4 +1,5 @@
 import React from 'react';
+import { SceneSelectorContainer, SceneSelect, Option } from './styles';
 
 interface SceneSelectorProps {
   scenes: { id: string; name: string }[];
@@ -11,20 +12,23 @@ export const SceneSelector: React.FC<SceneSelectorProps> = ({
   selectedScene,
   onSceneSelect,
 }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onSceneSelect(e.target.value || null);
+  };
+
   return (
-    <div className="scene-selector">
-      <select
+    <SceneSelectorContainer>
+      <SceneSelect
         value={selectedScene || ''}
-        onChange={(e) => onSceneSelect(e.target.value || null)}
-        className="scene-select"
+        onChange={handleChange}
       >
-        <option value="">All Scenes</option>
+        <Option value="">All Scenes</Option>
         {scenes.map((scene) => (
-          <option key={scene.id} value={scene.id}>
+          <Option key={scene.id} value={scene.id}>
             {scene.name}
-          </option>
+          </Option>
         ))}
-      </select>
-    </div>
+      </SceneSelect>
+    </SceneSelectorContainer>
   );
 };
